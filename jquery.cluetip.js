@@ -85,6 +85,7 @@
       delayedClose:     50,        // close clueTip on a timed delay
       activation:       'hover',  // set to 'click' to force user to click to show clueTip
                                   // set to 'focus' to show on focus of a form element and hide on blur
+                                  // set to 'contextclick' to show clueTip on right mouse click.
       clickThrough:     true,    // if true, and activation is not 'click', then clicking on link will take user to the link's href,
                                   // even if href and tipAttribute are equal
       tracking:         false,    // if true, clueTip will track mouse movement (experimental)
@@ -695,7 +696,19 @@
    =BIND EVENTS
 -------------------------------------- */
   // activate by click
-      if ( (/click|toggle/).test(opts.activation) ) {
+       if ( opts.activation == 'contextclick' ) {
+                $link.bind( 'contextmenu.cluetip', function ( event ) {
+                    if ( $cluetip.is( ':hidden' ) || !$link.is( '.cluetip-clicked' ) ) {
+                        activate( event );
+                        $( '.cluetip-clicked' ).removeClass( 'cluetip-clicked' );
+                        $link.addClass( 'cluetip-clicked' );
+                    } else {
+                        inactivate( event );
+                    }
+                    return false;
+                } );
+                // activate by focus; inactivate by blur
+            } else if ( (/click|toggle/).test(opts.activation) ) {
         $link.bind('click.cluetip', function(event) {
           if ($cluetip.is(':hidden') || !$link.is('.cluetip-clicked')) {
             activate(event);
